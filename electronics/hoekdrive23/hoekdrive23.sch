@@ -7119,7 +7119,7 @@ DIN A4, landscape with extra doc field</description>
 <text x="-91.44" y="38.1" size="3.81" layer="91">License: GPLv3</text>
 <text x="-91.44" y="33.02" size="3.81" layer="91">Copyright 2012</text>
 <text x="134.62" y="53.34" size="2.54" layer="91" rot="R180">Design By: Zach Hoeken</text>
-<text x="-12.7" y="48.26" size="2.1844" layer="91">Revision B</text>
+<text x="-7.62" y="48.26" size="2.1844" layer="91">Revision B</text>
 <text x="134.62" y="48.26" size="2.54" layer="91" rot="R180">Special thanks to: Andy Kirby AKA47</text>
 <text x="-96.52" y="-38.1" size="5.08" layer="91">Notes:</text>
 <text x="-96.52" y="-43.18" size="1.778" layer="91">This board is designed to be inserted into a carrier board. Which will provide power and I/O.  This carrier board must also have the following components:</text>

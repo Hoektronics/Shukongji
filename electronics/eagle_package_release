@@ -26,12 +26,18 @@
 # this is the 3D rendering engine.  its pretty easy to install:
 # sudo apt-get install povray povray-includes
 #
+#  example install:
+#  wget ftp://ftp.cadsoft.de/eagle/program/6.2/eagle-lin-6.2.0.run
+#  sh ./eagle-lin-6.2.0.run ~
+#  echo "export PATH=\"\$PATH:~/eagle-6.2.0/bin\"" >> ~/.bashrc
+#  source ~/.bashrc
+#
 #########################################################################
 
 #init up
 BOARD=`basename $1`
 VERSION=${2:-`date +%Y-%m-%d`}
-TO_DIR="makerbot-$BOARD-$VERSION"
+TO_DIR="hoektronics-$BOARD-$VERSION"
 FILELIST=""
 
 #directory structure

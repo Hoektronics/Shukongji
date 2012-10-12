@@ -48,15 +48,15 @@ mkdir -p "$TO_DIR/eagle"
 
 #create our gerber files!
 echo "Creating Gerber Files..."
-eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/ComponentTraces.pho" $BOARD/*.brd Top Pads Vias
-eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/CopperTraces.pho" $BOARD/*.brd Bottom Pads Vias
-eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/SolderMaskComponent.pho" $BOARD/*.brd tStop
-eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/SolderMaskCopper.pho" $BOARD/*.brd bStop
-eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/TopSilkScreen.pho" $BOARD/*.brd Dimension tPlace tDocu tValues tNames
-eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/BottomSilkScreen.pho" $BOARD/*.brd Dimension bPlace bDocu bValues bNames
-eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/TopCream.pho" $BOARD/*.brd Dimension tCream
-eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/BottomCream.pho" $BOARD/*.brd Dimension bCream
-eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/FabDrawing.pho" $BOARD/*.brd Dimension tPlace tOrigins tNames tValues tCream Holes Document Reference tDocu
+eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/TopCopperLayer.gtl" $BOARD/*.brd Top Pads Vias
+eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/TopSolderMask.gts" $BOARD/*.brd tStop
+eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/TopSilkScreen.gto" $BOARD/*.brd Dimension tPlace tDocu tValues tNames
+eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/TopSolderPaste.gtp" $BOARD/*.brd Dimension tCream
+eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/BottomCopperLayer.gbl" $BOARD/*.brd Bottom Pads Vias
+eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/BottomSolderMask.gts" $BOARD/*.brd bStop
+eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/BottomSilkScreen.gbo" $BOARD/*.brd Dimension bPlace bDocu bValues bNames
+eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/BottomSolderPaste.gbp" $BOARD/*.brd Dimension bCream
+#eagle -X -N -d GERBER_RS274X -o "$TO_DIR/gerber/FabDrawing.pho" $BOARD/*.brd Dimension tPlace tOrigins tNames tValues tCream Holes Document Reference tDocu
 
 # Drill data for NC drill st.
 # warning : eagle takes path of -R option from input file directory.

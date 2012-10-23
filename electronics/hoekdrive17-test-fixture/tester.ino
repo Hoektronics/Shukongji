@@ -1,0 +1,407 @@
+#include <LiquidCrystal.h>
+
+#define TEST_LED_PIN 11
+#define PASS_LED_PIN 10
+#define FAIL_LED_PIN  9
+
+#define BUTTON_PIN    8
+
+#define ENCODER_A_PIN 2
+#define ENCODER_B_PIN 3
+#define ENCODER_INTERRUPT_A 0
+#define ENCODER_INTERRUPT_B 1
+
+#define LCD_RS_PIN    14
+#define LCD_E_PIN     12
+#define LCD_DB4_PIN    7
+#define LCD_DB5_PIN    6
+#define LCD_DB6_PIN    5
+#define LCD_DB7_PIN    4
+
+LiquidCrystal lcd(LCD_RS_PIN, LCD_E_PIN, LCD_DB4_PIN, LCD_DB5_PIN, LCD_DB6_PIN, LCD_DB7_PIN);
+
+#define STEP_PIN      16
+#define DIR_PIN       15
+#define ENABLE_PIN    21
+#define MS1_PIN       20
+#define MS2_PIN       19
+#define SLEEP_PIN     17
+#define RESET_PIN     18
+
+#define PPR 1600
+
+void setup()
+{
+  //setup our LEDS
+  pinMode(TEST_LED_PIN, OUTPUT);
+  pinMode(PASS_LED_PIN, OUTPUT);
+  pinMode(FAIL_LED_PIN, OUTPUT);
+  digitalWrite(TEST_LED_PIN, LOW);
+  digitalWrite(PASS_LED_PIN, LOW);
+  digitalWrite(FAIL_LED_PIN, LOW);
+
+  //setup our button
+  pinMode(BUTTON_PIN, INPUT);
+  
+  //setup our encoder pins
+  pinMode(ENCODER_A_PIN, INPUT);
+  pinMode(ENCODER_B_PIN, INPUT);
+  attachInterrupt(ENCODER_INTERRUPT_A, handleInterrupt, CHANGE);
+  attachInterrupt(ENCODER_INTERRUPT_B, handleInterrupt, CHANGE);  
+  
+  //initialize our serial port
+  Serial.begin(115200);
+  Serial.println("HoekDrive17 Test Fixture v1.0");
+  
+  //initialize our stepper driver
+  pinMode(STEP_PIN, OUTPUT);
+  pinMode(DIR_PIN, OUTPUT);
+  pinMode(ENABLE_PIN, OUTPUT);
+  pinMode(MS1_PIN, OUTPUT);
+  pinMode(MS2_PIN, OUTPUT);
+  pinMode(SLEEP_PIN, OUTPUT);
+  pinMode(RESET_PIN, OUTPUT);
+  
+  digitalWrite(STEP_PIN, LOW);
+  digitalWrite(DIR_PIN, LOW);
+  digitalWrite(ENABLE_PIN, LOW); //default to disabled
+  digitalWrite(MS1_PIN, LOW);
+  digitalWrite(MS2_PIN, LOW);
+  digitalWrite(SLEEP_PIN, LOW); //default to sleep mode
+  digitalWrite(RESET_PIN, HIGH); //default to reset mode
+}
+
+volatile int encoder_position = 0;
+
+void handleInterrupt()
+{
+}
+
+void loop()
+{
+  lcd.print("Press start\nto begin test.");
+  
+  //wait until we get a button press.
+  while (digitalRead(BUTTON_PIN))
+    delay(1);
+    
+  //init our config pins
+  digitalWrite(DIR_PIN, HIGH); //forward
+  digitalWrite(MS1_PIN, LOW); //full step
+  digitalWrite(MS2_PIN, LOW); //full step
+    
+  //any movement when disabled?
+  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(SLEEP_PIN, HIGH);
+  if (measure_steps(200, 0, 10, 100))
+  {
+    lcd.print("DISABLE: PASS")
+    Serial.println("DISABLE MODE: PASS");
+  }
+  else
+  {
+    lcd.print("DISABLE: FAIL")
+    Serial.println("DISABLE MODE: FAIL");
+  }
+
+  //any movement in sleep mode?
+  digitalWrite(ENABLE_PIN, HIGH);
+  digitalWrite(SLEEP_PIN, LOW);
+  if (measure_steps(200, 0, 10, 100))
+  {
+    lcd.print("SLEEP: PASS")
+    Serial.println("SLEEP MODE: PASS");
+  }
+  else
+  {
+    lcd.print("SLEEP: FAIL")
+    Serial.println("SLEEP MODE: FAIL");
+  }
+  
+  //can we reset?
+  digitalWrite(SLEEP_PIN, HIGH);
+  
+  //full step forward
+
+  
+  //half step forward
+  digitalWrite(SLEEP_PIN, HIGH);
+  digitalWrite(RESET_PIN, HIGH);
+  digitalWrite(MS1_PIN, HIGH);
+  digitalWRite(MS2_PIN, LOW);
+  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(DIR_PIN, HIGH);
+  if (measure_steps(400, 1600, 10, 8))
+  {
+    lcd.print("HALF STEP: PASS")
+    Serial.println("HALF STEP MODE: PASS");
+  }
+  else
+  {
+    lcd.print("HALF STEP: FAIL")
+    Serial.println("HALF STEP MODE: FAIL");
+  }
+    
+  //1/4 step forward
+  digitalWrite(SLEEP_PIN, HIGH);
+  digitalWrite(RESET_PIN, HIGH);
+  digitalWrite(MS1_PIN, LOW);
+  digitalWRite(MS2_PIN, HIGH);
+  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(DIR_PIN, HIGH);
+  if (measure_steps(400, 1600, 10, 4))
+  {
+    lcd.print("1/4 STEP: PASS")
+    Serial.println("1/4 STEP MODE: PASS");
+  }
+  else
+  {
+    lcd.print("1/4 STEP: FAIL")
+    Serial.println("1/4 STEP MODE: FAIL");
+  }
+    
+  //1/16 step forward
+  digitalWrite(SLEEP_PIN, HIGH);
+  digitalWrite(RESET_PIN, HIGH);
+  digitalWrite(MS1_PIN, HIGH);
+  digitalWRite(MS2_PIN, HIGH);
+  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(DIR_PIN, HIGH);
+  if (measure_steps(400, 1600, 10, 1))
+  {
+    lcd.print("1/16 STEP: PASS")
+    Serial.println("1/16 STEP MODE: PASS");
+  }
+  else
+  {
+    lcd.print("1/16 STEP: FAIL")
+    Serial.println("1/16 STEP MODE: FAIL");
+  }
+}
+
+void measure_steps(int steps, int expected, int tolerance, int delay_time)
+{
+  //reset our position counter!
+  position = 0;
+  
+  //do our steps
+  for (int i=0; i<steps; i++)
+  {
+    digitalWrite(STEP_PIN, HIGH);
+    delay(delay_time);
+    digitalWrite(STEP_PIN, LOW);
+    delay(1);
+  }
+
+  //log our results.
+  Serial.print("EXPECTED: ");
+  Serial.print(expected, DEC);
+  Serial.print("TOLERANCE: ");
+  Serial.print(tolerance, DEC);
+  Serial.print("ACTUAL: ");
+  Serial.print(position, DEC);
+  Serial.println();
+  
+  //did it pass?
+  return (position >= expected-tolerance && position =< expected+tolerance)
+}
+
+bool test_full_fwd()
+{
+  //configure all our pins.
+  digitalWrite(SLEEP_PIN, HIGH);
+  digitalWrite(RESET_PIN, HIGH);
+  digitalWrite(MS1_PIN, LOW);
+  digitalWRite(MS2_PIN, LOW);
+  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(DIR_PIN, HIGH);
+  
+  //okay, do our test.
+  if (measure_steps(200, 1600, 10, 16))
+  {
+    lcd.print("FULL STEP FWD: PASS")
+    Serial.println("FULL STEP FORWARD MODE: PASS");
+    return true;
+  }
+  else
+  {
+    lcd.print("FULL STEP FWD: FAIL")
+    Serial.println("FULL STEP FORWARD MODE: FAIL");
+    return false;
+  } 
+}
+
+bool test_full_rev()
+{
+  //configure all our pins.
+  digitalWrite(SLEEP_PIN, HIGH);
+  digitalWrite(RESET_PIN, HIGH);
+  digitalWrite(MS1_PIN, LOW);
+  digitalWRite(MS2_PIN, LOW);
+  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(DIR_PIN, LOW);
+  
+  //okay, do our test.
+  if (measure_steps(200, -1600, 10, 16))
+  {
+    lcd.print("FULL STEP REV: PASS")
+    Serial.println("FULL STEP REVERSE MODE: PASS");
+    return true;
+  }
+  else
+  {
+    lcd.print("FULL STEP REV: FAIL")
+    Serial.println("FULL STEP REVERSE MODE: FAIL");
+    return false;
+  }
+}
+
+bool test_half_fwd()
+{
+  //configure all our pins.
+  digitalWrite(SLEEP_PIN, HIGH);
+  digitalWrite(RESET_PIN, HIGH);
+  digitalWrite(MS1_PIN, HIGH);
+  digitalWRite(MS2_PIN, LOW);
+  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(DIR_PIN, HIGH);
+  
+  //okay, do our test.
+  if (measure_steps(400, 1600, 10, 8))
+  {
+    lcd.print("HALF STEP FWD: PASS")
+    Serial.println("HALF STEP FORWARD MODE: PASS");
+    return true;
+  }
+  else
+  {
+    lcd.print("HALF STEP FWD: FAIL")
+    Serial.println("HALF STEP FORWARD MODE: FAIL");
+    return false;
+  }
+}
+
+bool test_half_rev()
+{
+  //configure all our pins.
+  digitalWrite(SLEEP_PIN, HIGH);
+  digitalWrite(RESET_PIN, HIGH);
+  digitalWrite(MS1_PIN, HIGH);
+  digitalWRite(MS2_PIN, LOW);
+  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(DIR_PIN, LOW);
+  
+  //okay, do our test.
+  if (measure_steps(400, -1600, 10, 8))
+  {
+    lcd.print("HALF STEP REV: PASS")
+    Serial.println("HALF STEP REVERSE MODE: PASS");
+    return true;
+  }
+  else
+  {
+    lcd.print("HALF STEP REV: FAIL")
+    Serial.println("HALF STEP REVERSE MODE: FAIL");
+    return false;
+  }
+}
+
+bool test_1_4_fwd()
+{
+  //configure all our pins.
+  digitalWrite(SLEEP_PIN, HIGH);
+  digitalWrite(RESET_PIN, HIGH);
+  digitalWrite(MS1_PIN, LOW);
+  digitalWRite(MS2_PIN, HIGH);
+  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(DIR_PIN, HIGH);
+  
+  //okay, do our test.
+  if (measure_steps(800, 1600, 10, 4))
+  {
+    lcd.print("1/4 STEP FWD: PASS")
+    Serial.println("1/4 STEP FORWARD MODE: PASS");
+    return true;
+  }
+  else
+  {
+    lcd.print("1/4 STEP FWD: FAIL")
+    Serial.println("1/4 STEP FORWARD MODE: FAIL");
+    return false;
+  } 
+}
+
+bool test_1_4_rev()
+{
+  //configure all our pins.
+  digitalWrite(SLEEP_PIN, HIGH);
+  digitalWrite(RESET_PIN, HIGH);
+  digitalWrite(MS1_PIN, LOW);
+  digitalWRite(MS2_PIN, HIGH);
+  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(DIR_PIN, LOW);
+  
+  //okay, do our test.
+  if (measure_steps(800, -1600, 10, 4))
+  {
+    lcd.print("1/4 STEP REV: PASS")
+    Serial.println("1/4 STEP REVERSE MODE: PASS");
+    return true;
+  }
+  else
+  {
+    lcd.print("1/4 STEP REV: FAIL")
+    Serial.println("1/4 STEP REVERSE MODE: FAIL");
+    return false;
+  } 
+}
+
+bool test_1_16_fwd()
+{
+  //configure all our pins.
+  digitalWrite(SLEEP_PIN, HIGH);
+  digitalWrite(RESET_PIN, HIGH);
+  digitalWrite(MS1_PIN, HIGH);
+  digitalWRite(MS2_PIN, HIGH);
+  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(DIR_PIN, HIGH);
+  
+  //okay, do our test.
+  if (measure_steps(3200, 1600, 10, 1))
+  {
+    lcd.print("1/16 STEP FWD: PASS")
+    Serial.println("1/16 STEP FORWARD MODE: PASS");
+    return true;
+  }
+  else
+  {
+    lcd.print("1/16 STEP FWD: FAIL")
+    Serial.println("1/16 STEP FORWARD MODE: FAIL");
+    return false;
+  }
+}
+
+bool test_1_16_rev()
+{
+  //configure all our pins.
+  digitalWrite(SLEEP_PIN, HIGH);
+  digitalWrite(RESET_PIN, HIGH);
+  digitalWrite(MS1_PIN, HIGH);
+  digitalWRite(MS2_PIN, HIGH);
+  digitalWrite(ENABLE_PIN, LOW);
+  digitalWrite(DIR_PIN, LOW);
+  
+  //okay, do our test.
+  if (measure_steps(3200, -1600, 10, 1))
+  {
+    lcd.print("1/16 STEP REV: PASS")
+    Serial.println("1/16 STEP REVERSE MODE: PASS");
+    return true;
+  }
+  else
+  {
+    lcd.print("1/16 STEP REV: FAIL")
+    Serial.println("1/16 STEP REVERSE MODE: FAIL");
+    return false;
+  }
+}

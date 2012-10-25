@@ -180,10 +180,10 @@ void loop()
     delay(1);
 }
 
-void measure_steps(int steps, int expected, int tolerance, int delay_time)
+boolean measure_steps(int steps, int expected, int tolerance, int delay_time)
 {
   //reset our position counter!
-  position = 0;
+  encoder_position = 0;
   
   //do our steps
   for (int i=0; i<steps; i++)
@@ -200,11 +200,11 @@ void measure_steps(int steps, int expected, int tolerance, int delay_time)
   Serial.print("TOLERANCE: ");
   Serial.print(tolerance, DEC);
   Serial.print("ACTUAL: ");
-  Serial.print(position, DEC);
+  Serial.print(encoder_position, DEC);
   Serial.println();
   
   //did it pass?
-  return (position >= expected-tolerance && position =< expected+tolerance)
+  return (encoder_position >= (expected - tolerance) && encoder_position <= (expected + tolerance));
 }
 
 bool test_full_fwd()
@@ -213,20 +213,20 @@ bool test_full_fwd()
   digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
   digitalWrite(MS1_PIN, LOW);
-  digitalWRite(MS2_PIN, LOW);
+  digitalWrite(MS2_PIN, LOW);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, HIGH);
   
   //okay, do our test.
   if (measure_steps(200, 1600, 10, 16))
   {
-    lcd.print("FULL STEP FWD: PASS")
+    lcd.print("FULL STEP FWD: PASS");
     Serial.println("FULL STEP FORWARD MODE: PASS");
     return true;
   }
   else
   {
-    lcd.print("FULL STEP FWD: FAIL")
+    lcd.print("FULL STEP FWD: FAIL");
     Serial.println("FULL STEP FORWARD MODE: FAIL");
     return false;
   } 
@@ -238,20 +238,20 @@ bool test_full_rev()
   digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
   digitalWrite(MS1_PIN, LOW);
-  digitalWRite(MS2_PIN, LOW);
+  digitalWrite(MS2_PIN, LOW);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, LOW);
   
   //okay, do our test.
   if (measure_steps(200, -1600, 10, 16))
   {
-    lcd.print("FULL STEP REV: PASS")
+    lcd.print("FULL STEP REV: PASS");
     Serial.println("FULL STEP REVERSE MODE: PASS");
     return true;
   }
   else
   {
-    lcd.print("FULL STEP REV: FAIL")
+    lcd.print("FULL STEP REV: FAIL");
     Serial.println("FULL STEP REVERSE MODE: FAIL");
     return false;
   }
@@ -263,20 +263,20 @@ bool test_half_fwd()
   digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
   digitalWrite(MS1_PIN, HIGH);
-  digitalWRite(MS2_PIN, LOW);
+  digitalWrite(MS2_PIN, LOW);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, HIGH);
   
   //okay, do our test.
   if (measure_steps(400, 1600, 10, 8))
   {
-    lcd.print("HALF STEP FWD: PASS")
+    lcd.print("HALF STEP FWD: PASS");
     Serial.println("HALF STEP FORWARD MODE: PASS");
     return true;
   }
   else
   {
-    lcd.print("HALF STEP FWD: FAIL")
+    lcd.print("HALF STEP FWD: FAIL");
     Serial.println("HALF STEP FORWARD MODE: FAIL");
     return false;
   }
@@ -288,20 +288,20 @@ bool test_half_rev()
   digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
   digitalWrite(MS1_PIN, HIGH);
-  digitalWRite(MS2_PIN, LOW);
+  digitalWrite(MS2_PIN, LOW);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, LOW);
   
   //okay, do our test.
   if (measure_steps(400, -1600, 10, 8))
   {
-    lcd.print("HALF STEP REV: PASS")
+    lcd.print("HALF STEP REV: PASS");
     Serial.println("HALF STEP REVERSE MODE: PASS");
     return true;
   }
   else
   {
-    lcd.print("HALF STEP REV: FAIL")
+    lcd.print("HALF STEP REV: FAIL");
     Serial.println("HALF STEP REVERSE MODE: FAIL");
     return false;
   }
@@ -313,20 +313,20 @@ bool test_1_4_fwd()
   digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
   digitalWrite(MS1_PIN, LOW);
-  digitalWRite(MS2_PIN, HIGH);
+  digitalWrite(MS2_PIN, HIGH);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, HIGH);
   
   //okay, do our test.
   if (measure_steps(800, 1600, 10, 4))
   {
-    lcd.print("1/4 STEP FWD: PASS")
+    lcd.print("1/4 STEP FWD: PASS");
     Serial.println("1/4 STEP FORWARD MODE: PASS");
     return true;
   }
   else
   {
-    lcd.print("1/4 STEP FWD: FAIL")
+    lcd.print("1/4 STEP FWD: FAIL");
     Serial.println("1/4 STEP FORWARD MODE: FAIL");
     return false;
   } 
@@ -338,20 +338,20 @@ bool test_1_4_rev()
   digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
   digitalWrite(MS1_PIN, LOW);
-  digitalWRite(MS2_PIN, HIGH);
+  digitalWrite(MS2_PIN, HIGH);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, LOW);
   
   //okay, do our test.
   if (measure_steps(800, -1600, 10, 4))
   {
-    lcd.print("1/4 STEP REV: PASS")
+    lcd.print("1/4 STEP REV: PASS");
     Serial.println("1/4 STEP REVERSE MODE: PASS");
     return true;
   }
   else
   {
-    lcd.print("1/4 STEP REV: FAIL")
+    lcd.print("1/4 STEP REV: FAIL");
     Serial.println("1/4 STEP REVERSE MODE: FAIL");
     return false;
   } 
@@ -363,20 +363,20 @@ bool test_1_16_fwd()
   digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
   digitalWrite(MS1_PIN, HIGH);
-  digitalWRite(MS2_PIN, HIGH);
+  digitalWrite(MS2_PIN, HIGH);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, HIGH);
   
   //okay, do our test.
   if (measure_steps(3200, 1600, 10, 1))
   {
-    lcd.print("1/16 STEP FWD: PASS")
+    lcd.print("1/16 STEP FWD: PASS");
     Serial.println("1/16 STEP FORWARD MODE: PASS");
     return true;
   }
   else
   {
-    lcd.print("1/16 STEP FWD: FAIL")
+    lcd.print("1/16 STEP FWD: FAIL");
     Serial.println("1/16 STEP FORWARD MODE: FAIL");
     return false;
   }
@@ -388,20 +388,20 @@ bool test_1_16_rev()
   digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
   digitalWrite(MS1_PIN, HIGH);
-  digitalWRite(MS2_PIN, HIGH);
+  digitalWrite(MS2_PIN, HIGH);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, LOW);
   
   //okay, do our test.
   if (measure_steps(3200, -1600, 10, 1))
   {
-    lcd.print("1/16 STEP REV: PASS")
+    lcd.print("1/16 STEP REV: PASS");
     Serial.println("1/16 STEP REVERSE MODE: PASS");
     return true;
   }
   else
   {
-    lcd.print("1/16 STEP REV: FAIL")
+    lcd.print("1/16 STEP REV: FAIL");
     Serial.println("1/16 STEP REVERSE MODE: FAIL");
     return false;
   }

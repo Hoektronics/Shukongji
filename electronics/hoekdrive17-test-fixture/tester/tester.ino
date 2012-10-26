@@ -62,13 +62,13 @@ void setup()
   pinMode(SLEEP_PIN, OUTPUT);
   pinMode(RESET_PIN, OUTPUT);
   
-  digitalWrite(STEP_PIN, LOW);
-  digitalWrite(DIR_PIN, LOW);
   digitalWrite(ENABLE_PIN, LOW); //default to disabled
-  digitalWrite(MS1_PIN, LOW);
-  digitalWrite(MS2_PIN, LOW);
   digitalWrite(SLEEP_PIN, LOW); //default to sleep mode
   digitalWrite(RESET_PIN, HIGH); //default to reset mode
+  digitalWrite(STEP_PIN, LOW);
+  digitalWrite(DIR_PIN, LOW);
+  digitalWrite(MS1_PIN, LOW);
+  digitalWrite(MS2_PIN, LOW);
 }
 
 volatile int encoder_position = 0;
@@ -124,6 +124,9 @@ void loop()
   //wait until we get a button press.
   while (digitalRead(BUTTON_PIN))
     delay(1);
+    
+  //let em know.
+  Serial.println("NEW TEST START.");
   
   //setup our leds.
   digitalWrite(TEST_LED_PIN, HIGH);
@@ -131,7 +134,7 @@ void loop()
   digitalWrite(FAIL_LED_PIN, LOW);
     
   //run all our tests.
-  bool pass = false;
+  boolean pass = false;
   while (true)
   {
     pass = test_full_fwd();
@@ -170,11 +173,22 @@ void loop()
     break;
   }
   
+  //turn off our driver
+  digitalWrite(ENABLE_PIN, LOW); //default to disabled
+  digitalWrite(SLEEP_PIN, LOW); //default to sleep mode
+  digitalWrite(RESET_PIN, HIGH); //default to reset mode
+  
   //setup our leds.
   digitalWrite(TEST_LED_PIN, LOW);
   digitalWrite(PASS_LED_PIN, pass);
   digitalWrite(FAIL_LED_PIN, !pass);
-
+  
+  //show the result.
+  if (pass)
+    Serial.println("BOARD PASSED.");
+  else
+    Serial.println("BOARD FAILED.");
+  
   //wait until we get a button press.
   while (digitalRead(BUTTON_PIN))
     delay(1);
@@ -207,7 +221,7 @@ boolean measure_steps(int steps, int expected, int tolerance, int delay_time)
   return (encoder_position >= (expected - tolerance) && encoder_position <= (expected + tolerance));
 }
 
-bool test_full_fwd()
+boolean test_full_fwd()
 {
   //configure all our pins.
   digitalWrite(SLEEP_PIN, HIGH);
@@ -232,7 +246,7 @@ bool test_full_fwd()
   } 
 }
 
-bool test_full_rev()
+boolean test_full_rev()
 {
   //configure all our pins.
   digitalWrite(SLEEP_PIN, HIGH);
@@ -257,7 +271,7 @@ bool test_full_rev()
   }
 }
 
-bool test_half_fwd()
+boolean test_half_fwd()
 {
   //configure all our pins.
   digitalWrite(SLEEP_PIN, HIGH);
@@ -282,7 +296,7 @@ bool test_half_fwd()
   }
 }
 
-bool test_half_rev()
+boolean test_half_rev()
 {
   //configure all our pins.
   digitalWrite(SLEEP_PIN, HIGH);
@@ -307,7 +321,7 @@ bool test_half_rev()
   }
 }
 
-bool test_1_4_fwd()
+boolean test_1_4_fwd()
 {
   //configure all our pins.
   digitalWrite(SLEEP_PIN, HIGH);
@@ -332,7 +346,7 @@ bool test_1_4_fwd()
   } 
 }
 
-bool test_1_4_rev()
+boolean test_1_4_rev()
 {
   //configure all our pins.
   digitalWrite(SLEEP_PIN, HIGH);
@@ -357,7 +371,7 @@ bool test_1_4_rev()
   } 
 }
 
-bool test_1_16_fwd()
+boolean test_1_16_fwd()
 {
   //configure all our pins.
   digitalWrite(SLEEP_PIN, HIGH);
@@ -382,7 +396,7 @@ bool test_1_16_fwd()
   }
 }
 
-bool test_1_16_rev()
+boolean test_1_16_rev()
 {
   //configure all our pins.
   digitalWrite(SLEEP_PIN, HIGH);

@@ -27,11 +27,11 @@ LiquidCrystal lcd(LCD_RS_PIN, LCD_E_PIN, LCD_DB4_PIN, LCD_DB5_PIN, LCD_DB6_PIN, 
 #define TQ1_PIN       20
 #define TQ2_PIN       19
 #define M1_PIN        17
-#define M2_PIN        17
-#define DCY1_PIN      21
-#define DCY2_PIN      22
-#define MO_PIN        23
-#define PROTECT_PIN   24
+#define M2_PIN        22
+#define DCY1_PIN      23
+#define DCY2_PIN      24
+#define MO_PIN        25
+#define PROTECT_PIN   26
 
 #define PPR 1600
 
@@ -56,24 +56,35 @@ void setup()
   
   //initialize our serial port
   Serial.begin(115200);
-  Serial.println("HoekDrive17 Test Fixture v1.0");
+  Serial.println("HoekDrive23 Test Fixture v1.0");
   
   //initialize our stepper driver
   pinMode(STEP_PIN, OUTPUT);
   pinMode(DIR_PIN, OUTPUT);
   pinMode(ENABLE_PIN, OUTPUT);
-  pinMode(MS1_PIN, OUTPUT);
-  pinMode(MS2_PIN, OUTPUT);
-  pinMode(SLEEP_PIN, OUTPUT);
   pinMode(RESET_PIN, OUTPUT);
+  pinMode(TQ1_PIN, OUTPUT);
+  pinMode(TQ2_PIN, OUTPUT);
+  pinMode(M1_PIN, OUTPUT);
+  pinMode(M2_PIN, OUTPUT);
+  pinMode(DCY1_PIN, OUTPUT);
+  pinMode(DCY2_PIN, OUTPUT);
+  pinMode(MO_PIB, INPUT);
+  pinMode(PROTECT_PIN, INPUT);
   
+  //setup our basic pins.
   digitalWrite(ENABLE_PIN, LOW); //default to disabled
-  digitalWrite(SLEEP_PIN, LOW); //default to sleep mode
-  digitalWrite(RESET_PIN, HIGH); //default to reset mode
+  digitalWrite(RESET_PIN, HIGH); //default to not reset
   digitalWrite(STEP_PIN, LOW);
   digitalWrite(DIR_PIN, LOW);
-  digitalWrite(MS1_PIN, LOW);
-  digitalWrite(MS2_PIN, LOW);
+
+  //100% full torque (current)
+  digitalWrite(TQ1_PIN, LOW);
+  digitalWrite(TQ2_PIN, LOW);
+  
+  //normal 0% decay
+  digitalWrite(DCY1_PIN, LOW);
+  digitalWrite(DCY2_PIN, LOW);
 }
 
 volatile int encoder_position = 0;
@@ -158,11 +169,11 @@ void loop()
     if (!pass)
       break;
 
-    pass = test_1_4_fwd();
+    pass = test_1_8_fwd();
     if (!pass)
       break;
 
-    pass = test_1_4_rev();
+    pass = test_1_8_rev();
     if (!pass)
       break;
 
@@ -179,9 +190,9 @@ void loop()
   }
   
   //turn off our driver
+  digitalWrite(RESET_PIN, LOW); //reset our board
+  digitalWrite(RESET_PIN, HIGH); //reset our board
   digitalWrite(ENABLE_PIN, LOW); //default to disabled
-  digitalWrite(SLEEP_PIN, LOW); //default to sleep mode
-  digitalWrite(RESET_PIN, HIGH); //default to reset mode
   
   //setup our leds.
   digitalWrite(TEST_LED_PIN, LOW);
@@ -229,10 +240,9 @@ boolean measure_steps(int steps, int expected, int tolerance, int delay_time)
 boolean test_full_fwd()
 {
   //configure all our pins.
-  digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
-  digitalWrite(MS1_PIN, LOW);
-  digitalWrite(MS2_PIN, LOW);
+  digitalWrite(M1_PIN, LOW);
+  digitalWrite(M2_PIN, LOW);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, HIGH);
   
@@ -254,10 +264,9 @@ boolean test_full_fwd()
 boolean test_full_rev()
 {
   //configure all our pins.
-  digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
-  digitalWrite(MS1_PIN, LOW);
-  digitalWrite(MS2_PIN, LOW);
+  digitalWrite(M1_PIN, LOW);
+  digitalWrite(M2_PIN, LOW);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, LOW);
   
@@ -279,10 +288,9 @@ boolean test_full_rev()
 boolean test_half_fwd()
 {
   //configure all our pins.
-  digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
-  digitalWrite(MS1_PIN, HIGH);
-  digitalWrite(MS2_PIN, LOW);
+  digitalWrite(M1_PIN, HIGH);
+  digitalWrite(M2_PIN, LOW);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, HIGH);
   
@@ -304,10 +312,9 @@ boolean test_half_fwd()
 boolean test_half_rev()
 {
   //configure all our pins.
-  digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
-  digitalWrite(MS1_PIN, HIGH);
-  digitalWrite(MS2_PIN, LOW);
+  digitalWrite(M1_PIN, HIGH);
+  digitalWrite(M2_PIN, LOW);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, LOW);
   
@@ -326,52 +333,50 @@ boolean test_half_rev()
   }
 }
 
-boolean test_1_4_fwd()
+boolean test_1_8_fwd()
 {
   //configure all our pins.
-  digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
-  digitalWrite(MS1_PIN, LOW);
-  digitalWrite(MS2_PIN, HIGH);
+  digitalWrite(M1_PIN, HIGH);
+  digitalWrite(M2_PIN, HIGH);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, HIGH);
   
   //okay, do our test.
   if (measure_steps(800, 1600, 10, 4))
   {
-    lcd.print("1/4 STEP FWD: PASS");
-    Serial.println("1/4 STEP FORWARD MODE: PASS");
+    lcd.print("1/8 STEP FWD: PASS");
+    Serial.println("1/8 STEP FORWARD MODE: PASS");
     return true;
   }
   else
   {
-    lcd.print("1/4 STEP FWD: FAIL");
-    Serial.println("1/4 STEP FORWARD MODE: FAIL");
+    lcd.print("1/8 STEP FWD: FAIL");
+    Serial.println("1/8 STEP FORWARD MODE: FAIL");
     return false;
   } 
 }
 
-boolean test_1_4_rev()
+boolean test_1_8_rev()
 {
   //configure all our pins.
-  digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
-  digitalWrite(MS1_PIN, LOW);
-  digitalWrite(MS2_PIN, HIGH);
+  digitalWrite(M1_PIN, HIGH);
+  digitalWrite(M2_PIN, HIGH);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, LOW);
   
   //okay, do our test.
   if (measure_steps(800, -1600, 10, 4))
   {
-    lcd.print("1/4 STEP REV: PASS");
-    Serial.println("1/4 STEP REVERSE MODE: PASS");
+    lcd.print("1/8 STEP REV: PASS");
+    Serial.println("1/8 STEP REVERSE MODE: PASS");
     return true;
   }
   else
   {
-    lcd.print("1/4 STEP REV: FAIL");
-    Serial.println("1/4 STEP REVERSE MODE: FAIL");
+    lcd.print("1/8 STEP REV: FAIL");
+    Serial.println("1/8 STEP REVERSE MODE: FAIL");
     return false;
   } 
 }
@@ -379,10 +384,9 @@ boolean test_1_4_rev()
 boolean test_1_16_fwd()
 {
   //configure all our pins.
-  digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
-  digitalWrite(MS1_PIN, HIGH);
-  digitalWrite(MS2_PIN, HIGH);
+  digitalWrite(M1_PIN, LOW);
+  digitalWrite(M2_PIN, HIGH);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, HIGH);
   
@@ -404,10 +408,9 @@ boolean test_1_16_fwd()
 boolean test_1_16_rev()
 {
   //configure all our pins.
-  digitalWrite(SLEEP_PIN, HIGH);
   digitalWrite(RESET_PIN, HIGH);
-  digitalWrite(MS1_PIN, HIGH);
-  digitalWrite(MS2_PIN, HIGH);
+  digitalWrite(M1_PIN, LOW);
+  digitalWrite(M2_PIN, HIGH);
   digitalWrite(ENABLE_PIN, LOW);
   digitalWrite(DIR_PIN, LOW);
   

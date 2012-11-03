@@ -31,28 +31,46 @@ LiquidCrystal lcd(LCD_RS_PIN, LCD_E_PIN, LCD_DB4_PIN, LCD_DB5_PIN, LCD_DB6_PIN, 
 #define PPR 1600
 
 void setup()
-{
+{  
+  //init our lcd
+  lcd.begin(16, 2);
+  lcd.setCursor(0,0);
+  lcd.print("HoekDrive17 Tester");
+  lcd.setCursor(0,1);
+  lcd.print("Version 1.0");
+  
   //setup our LEDS
   pinMode(TEST_LED_PIN, OUTPUT);
   pinMode(PASS_LED_PIN, OUTPUT);
   pinMode(FAIL_LED_PIN, OUTPUT);
+
+  digitalWrite(TEST_LED_PIN, HIGH);
+  delay(500);
   digitalWrite(TEST_LED_PIN, LOW);
+  digitalWrite(PASS_LED_PIN, HIGH);
+  delay(500);
   digitalWrite(PASS_LED_PIN, LOW);
+  digitalWrite(FAIL_LED_PIN, HIGH);
+  delay(500);
   digitalWrite(FAIL_LED_PIN, LOW);
 
   //setup our button
   pinMode(BUTTON_PIN, INPUT);
+  digitalWrite(BUTTON_PIN, HIGH);
   
   //setup our encoder pins
   pinMode(ENCODER_A_PIN, INPUT);
+  digitalWrite(ENCODER_A_PIN, HIGH);
   pinMode(ENCODER_B_PIN, INPUT);
+  digitalWrite(ENCODER_B_PIN, HIGH);
+
   attachInterrupt(ENCODER_INTERRUPT_A, read_quadrature_a, CHANGE);
   attachInterrupt(ENCODER_INTERRUPT_B, read_quadrature_b, CHANGE);  
   
   //initialize our serial port
   Serial.begin(115200);
   Serial.println("HoekDrive17 Test Fixture v1.0");
-  
+
   //initialize our stepper driver
   pinMode(STEP_PIN, OUTPUT);
   pinMode(DIR_PIN, OUTPUT);
@@ -101,7 +119,7 @@ void read_quadrature_b()
   if (digitalRead(ENCODER_B_PIN) == HIGH)
   {   
     // check channel A to see which way
-    if (digitalRead(ENCODER_A_PIN) == LOW)
+    if (digitalRead(ENCODER_A_PIN) == HIGH)
         encoder_position++;
     else
         encoder_position--;
@@ -110,7 +128,7 @@ void read_quadrature_b()
   else                                        
   {
     // check channel A to see which way
-    if (digitalRead(ENCODER_A_PIN) == LOW)
+    if (digitalRead(ENCODER_A_PIN) == HIGH)
         encoder_position--;
     else
         encoder_position++;
@@ -119,11 +137,21 @@ void read_quadrature_b()
 
 void loop()
 {
-  lcd.print("Press start\nto begin test.");
+  lcd.begin(16, 2);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Press start");
+  lcd.setCursor(0,1);
+  lcd.print("to begin test.");
   
   //wait until we get a button press.
   while (digitalRead(BUTTON_PIN))
     delay(1);
+    
+  lcd.begin(16, 2);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("TESTING.");
     
   //let em know.
   Serial.println("NEW TEST START.");
@@ -203,7 +231,7 @@ boolean measure_steps(int steps, int expected, int tolerance, int delay_time)
   for (int i=0; i<steps; i++)
   {
     digitalWrite(STEP_PIN, HIGH);
-    delay(delay_time);
+    delay(delay_time/2);
     digitalWrite(STEP_PIN, LOW);
     delay(1);
   }
@@ -234,12 +262,14 @@ boolean test_full_fwd()
   //okay, do our test.
   if (measure_steps(200, 1600, 10, 16))
   {
+    lcd.clear();
     lcd.print("FULL STEP FWD: PASS");
     Serial.println("FULL STEP FORWARD MODE: PASS");
     return true;
   }
   else
   {
+    lcd.clear();
     lcd.print("FULL STEP FWD: FAIL");
     Serial.println("FULL STEP FORWARD MODE: FAIL");
     return false;
@@ -259,12 +289,14 @@ boolean test_full_rev()
   //okay, do our test.
   if (measure_steps(200, -1600, 10, 16))
   {
+    lcd.clear();
     lcd.print("FULL STEP REV: PASS");
     Serial.println("FULL STEP REVERSE MODE: PASS");
     return true;
   }
   else
   {
+    lcd.clear();
     lcd.print("FULL STEP REV: FAIL");
     Serial.println("FULL STEP REVERSE MODE: FAIL");
     return false;
@@ -284,12 +316,14 @@ boolean test_half_fwd()
   //okay, do our test.
   if (measure_steps(400, 1600, 10, 8))
   {
+    lcd.clear();
     lcd.print("HALF STEP FWD: PASS");
     Serial.println("HALF STEP FORWARD MODE: PASS");
     return true;
   }
   else
   {
+    lcd.clear();
     lcd.print("HALF STEP FWD: FAIL");
     Serial.println("HALF STEP FORWARD MODE: FAIL");
     return false;
@@ -309,12 +343,14 @@ boolean test_half_rev()
   //okay, do our test.
   if (measure_steps(400, -1600, 10, 8))
   {
+    lcd.clear();
     lcd.print("HALF STEP REV: PASS");
     Serial.println("HALF STEP REVERSE MODE: PASS");
     return true;
   }
   else
   {
+    lcd.clear();
     lcd.print("HALF STEP REV: FAIL");
     Serial.println("HALF STEP REVERSE MODE: FAIL");
     return false;
@@ -334,12 +370,14 @@ boolean test_1_4_fwd()
   //okay, do our test.
   if (measure_steps(800, 1600, 10, 4))
   {
+    lcd.clear();
     lcd.print("1/4 STEP FWD: PASS");
     Serial.println("1/4 STEP FORWARD MODE: PASS");
     return true;
   }
   else
   {
+    lcd.clear();
     lcd.print("1/4 STEP FWD: FAIL");
     Serial.println("1/4 STEP FORWARD MODE: FAIL");
     return false;
@@ -359,12 +397,14 @@ boolean test_1_4_rev()
   //okay, do our test.
   if (measure_steps(800, -1600, 10, 4))
   {
+    lcd.clear();
     lcd.print("1/4 STEP REV: PASS");
     Serial.println("1/4 STEP REVERSE MODE: PASS");
     return true;
   }
   else
   {
+    lcd.clear();
     lcd.print("1/4 STEP REV: FAIL");
     Serial.println("1/4 STEP REVERSE MODE: FAIL");
     return false;
@@ -384,12 +424,14 @@ boolean test_1_16_fwd()
   //okay, do our test.
   if (measure_steps(3200, 1600, 10, 1))
   {
+    lcd.clear();
     lcd.print("1/16 STEP FWD: PASS");
     Serial.println("1/16 STEP FORWARD MODE: PASS");
     return true;
   }
   else
   {
+    lcd.clear();
     lcd.print("1/16 STEP FWD: FAIL");
     Serial.println("1/16 STEP FORWARD MODE: FAIL");
     return false;
@@ -409,12 +451,14 @@ boolean test_1_16_rev()
   //okay, do our test.
   if (measure_steps(3200, -1600, 10, 1))
   {
+    lcd.clear();
     lcd.print("1/16 STEP REV: PASS");
     Serial.println("1/16 STEP REVERSE MODE: PASS");
     return true;
   }
   else
   {
+    lcd.clear();
     lcd.print("1/16 STEP REV: FAIL");
     Serial.println("1/16 STEP REVERSE MODE: FAIL");
     return false;

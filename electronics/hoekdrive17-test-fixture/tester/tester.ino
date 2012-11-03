@@ -45,13 +45,13 @@ void setup()
   pinMode(FAIL_LED_PIN, OUTPUT);
 
   digitalWrite(TEST_LED_PIN, HIGH);
-  delay(500);
+  delay(400);
   digitalWrite(TEST_LED_PIN, LOW);
   digitalWrite(PASS_LED_PIN, HIGH);
-  delay(500);
+  delay(400);
   digitalWrite(PASS_LED_PIN, LOW);
   digitalWrite(FAIL_LED_PIN, HIGH);
-  delay(500);
+  delay(400);
   digitalWrite(FAIL_LED_PIN, LOW);
 
   //setup our button
@@ -227,13 +227,14 @@ boolean measure_steps(int steps, int expected, int tolerance, int delay_time)
   //reset our position counter!
   encoder_position = 0;
   
+  delay_time = 300000 / steps;
+  
   //do our steps
   for (int i=0; i<steps; i++)
   {
     digitalWrite(STEP_PIN, HIGH);
-    delay(delay_time/2);
+    delayMicroseconds(delay_time);
     digitalWrite(STEP_PIN, LOW);
-    delay(1);
   }
 
   //log our results.

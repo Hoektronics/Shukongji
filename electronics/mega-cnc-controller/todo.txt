@@ -1,0 +1,9 @@
+TODO:
+
+* switch to 1N4148W-V for relay diodes.
+* switch to SMT caps for everything.
+* move to SMT switches for everything
+* move to pluggable terminals for stepper drivers (.156")
+* drop current measurement
+* find sourceable diode for reverse protection
+* switch to IRF530 for mosfet

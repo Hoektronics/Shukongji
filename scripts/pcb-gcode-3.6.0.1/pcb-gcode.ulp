@@ -297,12 +297,11 @@ void drill(int which_side, string suffix)
 			} 
 			// for
 
-			output_file_postamble();
-
 			// End of file
 			// change back to tool 1
 			out(fi(TOOL_CODE + EOL, 1));
 			end_gcode();
+			output_file_postamble();
 		} 
 		// output
 	} 
@@ -614,8 +613,8 @@ void output_text_code(string file_name)
 				// if (top and bottom check)
 			} 
 			// T.wires
-			output_file_postamble();
 			end_gcode();
+			output_file_postamble();
 			user_file_closing();
 		} 
 		// output
@@ -691,8 +690,8 @@ void output_mill_code(string file_name)
 				// if (P.layer == MILL_LAYER)
 			} 
 			// pieces
-			output_file_postamble();
 			end_gcode();
+			output_file_postamble();
 			user_file_closing();
 		} 
 		// output
@@ -853,10 +852,10 @@ void write_outlines(int which_side, string suffix, int task)
 						// switch(task)
 
 						if (m_isolate >= ISO_MAX || SINGLE_PASS || task == TASK_FILL) {
-							output_file_postamble();
-							rz(DEFAULT_Z_UP);
-							spot_drill(B);
+    					rz(DEFAULT_Z_UP);
+    					spot_drill(B);
 							end_gcode();
+							output_file_postamble();
 						}
 
 						sprintf(g_cmd, "delete (%f %f) (%f %f);\n",

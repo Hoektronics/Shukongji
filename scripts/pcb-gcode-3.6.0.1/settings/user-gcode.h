@@ -16,8 +16,8 @@
 string FILE_BEGIN[] = { "", "", "", "" };
 string FILE_END[]   = { "", "", "", "" };
 
-FILE_BEGIN[ALL]    = "(Beginning of every file)\n";
-FILE_END[ALL]      = "(End of every file)\n";
+FILE_BEGIN[ALL]    = "(Beginning of every file)\nG92 X0 Y0 Z0\nM300 F888 P2000\n";
+FILE_END[ALL]      = "(End of every file)\nG0 X0 Y0\nM84 (Motors off)\nM300 F420 P2000\n";
 
 FILE_BEGIN[BOTTOM] = "(Beginning of every bottom file)\n";
 FILE_END[BOTTOM]   = "(End of every bottom file)\n";

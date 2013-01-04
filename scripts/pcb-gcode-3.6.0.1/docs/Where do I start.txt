@@ -1,0 +1,62 @@
+On 10/14/07, oceanartscasino <oceanartscasino@yahoo.com> wrote:
+> Eagle updated version again, added pcb-gcode contents to ulp, list shows 5 "flavors"!
+> Thanks very much, since I don't actually have a mill as yet connected, would generic be
+> the best choice, or is there any other suggestion just to become more familiar with the
+> program or am I really just going to have to wait until I get a small machine set up? Any
+> recommended low cost machines or scratch builders reference?
+>
+
+I would not wait. As you experiment, you will learn more about what
+price, type and size machine will be best for you.
+
+Google is great for finding information like this. One of the most
+difficult things about starting a new hobby or profession is learning
+its language. With the web (and Google), you can search for, for
+instance, "homebrew cnc" Then you find a new word like "back plotter,"
+then you see "linear bearing," etc. Before you know it you have
+learned a lot of new words, and it is 01:00 in the morning!
+
+I would recommend beginning with Generic.pp, it is like mach.pp, but
+does not use the drill cycle (G82). That way you see what is happening
+step-by-step, without any "magic" commands that do more than one
+thing.
+
+You can use one of the many "back plotters" to view the g-code you
+generate with pcb-gcode.
+http://www.cncsimulator.com lets you see gcode "cut" from a solid,
+simulated block of material. (Free)
+http://www.ncplot.com shows you the gcode drawn in 3D-space. It is
+quick and easy. (V1.1 is Free)
+There are many more.
+
+As for machines, it is like the old saying, "Time, price or quality,
+pick any two." If you spend more, you have to do less. There are lots
+of plans, blogs, etc. on the web. There are also links, documentation,
+and photos in this group.
+
+I also /highly/ recommend Google's SketchUp CAD program.
+http://sketchup.google.com/ It has turned the CAD world on its ear by
+making 3D CAD easy to use. It is great for designing a machine, parts,
+your new deck, etc. (There are some photos of SketchUp drawings for my
+machine in this group.) I am generally a "build first, document later"
+person, but designing using a CAD program first can save you a lot of
+trouble later. (Free. You can also buy the professional version with
+more export formats.)
+
+If you prefer a more traditional CAD program, try Alibre Express.
+http://www.alibre.com/ One of its great features is creating 2D
+drawings (like blue prints) from your 3D models, automatically!
+Including measurements, drill hole "call outs" (labels), etc. (Basic
+version is Free)
+
+Finally, if you have questions you can't find the answers for, post a
+message in this group and someone will respond. There are a lot of
+nice folks here. In fact, about 99.9% nice (there was that one guy).
+
+Happy Milling!
+
+--
+Regards,
+ JJ
+
+http://www.pcbgcode.org

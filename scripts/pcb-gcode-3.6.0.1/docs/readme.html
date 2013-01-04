@@ -1,0 +1,280 @@
+<h1><span class="caps">PCB</span>-<span class="caps">GCODE</span> GCode Generation Utility</h1>
+<p>Copyright &#169; 2004-2013 by John Johnson Software, <span class="caps">LLC</span><br />
+All Rights Reserved</p>
+<p>Please visit the <a href="http://pcbgcode.org">Phorum</a> or the <br />
+<a href="http://groups.yahoo.com/group/pcb-gcode">Yahoo! group</a><br />
+or the <a href="http://www.facebook.com/groups/pcbgcode/">Facebook group</a><br />
+or email <a href="mailto:pcbgcode@pcbgcode.org">pcbgcode@pcbgcode.org</a>.</p>
+<blockquote>
+<p><a href="http://opensource.org"><span class="caps">OSI</span></a> Certified Open Source Software.<br />
+This work is now distributed under the <a href="http://opensource.org/licenses/artistic-license.php">Artistic License</a> from the Open Source Initiative.<br />
+I would like to see and possibly include any changes you make to the software. Thanks!</p>
+</blockquote>
+<p>This program generates <a href="http://en.wikipedia.org/wiki/Gcode">g-code</a> for milling PC boards. It creates g-code for milling trace outlines for the Top and Bottom layers. This can be done with a <a href="http://pcbgcode.org/file.php/0/53/Picture_6.jpg">progressive offset</a> so that slivers between most traces are removed. It also generates drill files as seen from the top and bottom, with pauses for changing bits. It generates milling layer data as seen from the top or bottom of the board. It also generates text engraving code for any text on the Milling layer.</p>
+<h2>More Information</h2>
+<p>There is a website with forums, downloads, etc. for pcb-gcode <a href="http://pcbgcode.org">here</a>.<br />
+There is a <a href="http://groups.yahoo.com/group/pcb-gcode">Yahoo! group</a> dedicated to the users of pcb-gcode. There you will find other users, a mailing list for discussing pcb-gcode, photos of user&#8217;s machines and boards, databases of suppliers, bugs, faqs and suggestions, and more. Also, please add yourself to the pcb-gcode <a href="http://www.frappr.com/pcbgcode">Frappr! map</a> I like to see where the people are that use pcb-gcode. I have never received any spam from Frappr!.</p>
+<h2>Installation</h2>
+<p><strong>To use this version, you must have Eagle 5 or above.</strong><br /> <br />
+If you want to use Eagle 4.16x or 4.17, please use <a href="http://pcbgcode.org/list.php?12">pcb-gcode 3.3.3</a>.</p>
+<p>Unzip the pcb-gcode archive and move the files to a folder. I like to create an <code>eagle</code> folder in my <code>$HOME</code> directory, then create a <code>ulp</code> folder there, and put the pcb-gcode files in it. In the Eagle Control Panel, in Options | Directories&#8230; add the path to the <code>ulp</code> folder you created as the <strong>first</strong> entry in the <code>User Language Programs</code> option. Here are typical paths for the operating systems Eagle supports:<br />
+|<em>&lt;.OS|_&lt;.In Control Panel|</em>&lt;.Real Paths|<br />
+|Mac OS X|$<span class="caps">HOME</span>/Documents/eagle/ulp:$<span class="caps">EAGLEDIR</span>/ulp|/Users/John/Documents/eagle/ulp<br />/Applications/<span class="caps">EAGLE</span>/ulp|<br />
+|Linux|$<span class="caps">HOME</span>/eagle/ulp:$<span class="caps">EAGLEDIR</span>/ulp|/home/john/eagle/ulp<br />/opt/eagle/ulp|<br />
+|Windows|$<span class="caps">HOME</span>/eagle/ulp;$<span class="caps">EAGLE</span>/ulp|C:\Documents and Settings\John\My Documents\eagle\ulp<br />C:\Program Files\<span class="caps">EAGLE</span>\ulp|</p>
+<h2>Using <span class="caps">PCB</span>-<span class="caps">GCODE</span></h2>
+<p>From Eagle&#8217;s Board Editor (that&#8217;s where you lay out your board), in the command line (just below the tool bar at the top) type:</p>
+<p><code>run pcb-gcode-setup</code></p>
+<p>The first time you run pcb-gcode-setup, you select the style of g-code to suit the controller for your machine, such as TurboCNC, <span class="caps">EMC</span>, Mach3, etc. You may also select Metric or Imperial units, the size of tools you use, and more. If you want to run setup again later, just use the same command:</p>
+<p><code>run pcb-gcode-setup</code></p>
+<p>I usually run pcb-gcode-setup, check the settings, then click the <code>Accept and make my board</code> button. If you know that the settings are okay, and you just want to generate g-code files, from the board editor run this command:</p>
+<code>run pcb-gcode</code>
+<p>You can change the names of the g-code files that are created. Assuming the board you are working on is named <code>board</code>, and you are using the default file name settings, the files are named as follows:<br />
+|<em>&lt;.File Name|</em>&lt;.Contents|<br />
+|^.board.top.etch.tap|Outline of traces for the top layer.|<br />
+|^.board.bot.etch.tap|Outline of traces for the bottom layer. Note that the coordinates in this file are negative. That means when milling the bottom, you origin at the right side of the board.|<br />
+|^.board.top.drill.tap|Drill file for drilling from the top of the board. Asks for drill bits in succession, smallest to largest. A table of all sizes needed is at the beginning of the file.|<br />
+|^.board.bot.drill.tap|Drill file for drilling from the bottom of the board.|<br />
+|^.board.top.mill.tap|Milling layer data as seen from the bottom of the board.|<br />
+|^.board.bot.mill.tap|Milling layer data as seen from the top of the board.|<br />
+|^.board.top.text.tap|Text from the Milling layer to be engraved. The text is cut like it would be written with a pen, it is not outlined like text on the Top or Bottom layers. It is much easier to read, and looks a lot better.|<br />
+|^.board.bot.text.tap|Text from the Milling layer to be engraved.|</p>
+<p />
+<p>I also like to assign shortcut keys to run pcb-gcode and the setup program. Open a board in Eagle. In Options | Assign, click the <code>New</code> button to make each of the assignments. Of course feel free to use different key combinations.<br />
+|<em>&lt;.Keys|</em>&lt;.Assigned command|<br />
+|Shift+Ctrl+S|run pcb-gcode-setup|<br />
+|Shift+Ctrl+R|run pcb-gcode|</p>
+<h2>Setup Options</h2>
+<p><strong>Be sure and set <code>Units</code> to the correct unit of measure.</strong> You can set the <code>Units</code> on the <code>Machine</code> tab.</p>
+<h3>Generation Options tab</h3>
+<p>These are the options you will use the most. They control which files are created, the depth settings for tools, etc.</p>
+<h4>Top Side</h4>
+<table>
+	<tr>
+		<td style="vertical-align:top;">Generate&nbsp;top&nbsp;outlines</td>
+		<td>Track outlines for the top layer.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Generate&nbsp;top&nbsp;drills</td>
+		<td>Drill holes to be drilled from the top of the board.</td>
+	</tr>
+</table>
+<h4>Bottom Side</h4>
+<table>
+	<tr>
+		<td style="vertical-align:top;">Generate&nbsp;bottom&nbsp;outlines</td>
+		<td>Track outlines for the bottom layer.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Generate&nbsp;Bottom&nbsp;Drill</td>
+		<td>Drill holes to be drilled from the bottom of the board.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Mirror</td>
+		<td>Mirrors the outlines and drill holes for the bottom of the board. This is used if your preview (backplot) program doesn&#8217;t handle negative X coordinates very well. This is becoming obsolete since there is a built-in previewer now.</td>
+	</tr>
+</table>
+<h4>Board</h4>
+<table>
+	<tr>
+		<td style="vertical-align:top;">Preview</td>
+		<td>Use the built-in previewer to view what the generated g-code should look like when milled.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Generate&nbsp;milling</td>
+		<td>Milling layer data for the board. Generates g-code files that can be used from the top or the bottom side of the board. Any wires (lines) or arcs on the Milling layer will be included in these files.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Generate&nbsp;text</td>
+		<td>g-code to engrave text from the Milling layer. This text will be &#8220;written&#8221; using g-code for each line in the character. This is different from text that is on the Top and Bottom layers that is outlined or &#8220;isolated&#8221; just like the tracks are.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Spot drill holes</td>
+		<td>When outlining the tracks, make a small &#8220;starter hole&#8221; where each drill hole will be. Later when you drill the board, this will help the drill bits start cutting, reducing breakage and improving accuracy.</td>
+	</tr>
+</table>
+<h4>Isolation</h4>
+<p><img src="images/isolation_settings.jpg" alt="" /></p>
+<table>
+	<tr>
+		<td style="vertical-align:top;">Default</td>
+		<td>The first pass around the tracks will offset the tool this amount. You can start with 0.001&quot;/0.02mm</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Maximum</td>
+		<td>The maximum isolation value. Try 0.020&quot;/0.5mm</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Step size</td>
+		<td>Amount to increment the isolation after each pass. This depends on how wide the path is that your tool cuts. For instance, if you use a conical bit and it cuts a path 0.007&quot;/0.2mm wide, you could try 0.005&quot;/0.17mm here.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Etching Tool Size</td>
+		<td>How wide your cutting tool cuts.</td>
+	</tr>
+</table>
+<p>If you set the options shown above, the cutting tool will make five passes around each track. The first pass will be 0.001&quot;/0.02mm outside the track, the second will be 0.006&quot;/0.15mm, and so on.</p>
+<h3>Machine tab</h3>
+<h4>Z Axis</h4>
+<table>
+	<tr>
+		<td style="vertical-align:top;">Z High</td>
+		<td>Z position that is high enough to clear fixtures, etc.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Z Up</td>
+		<td>Just above the board.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Z Down</td>
+		<td>How deep the etching cuts will be.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Drill Depth</td>
+		<td>How deep to plunge the drill when drilling holes.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Drill Dwell</td>
+		<td>How long to pause at the bottom of each hole when drilling.</td>
+	</tr>
+</table>
+<h4>Units</h4>
+<p>Select the unit of measure your controller uses. Please note that a mil is 0.001&quot;, and not an millimeter. A micron is 0.001mm.</p>
+<h4>Tool Change</h4>
+<table>
+	<tr>
+		<td style="vertical-align:top;">Position X, Y &amp; Z</td>
+		<td>Where to move the tool when it is time to change bits.</td>
+	</tr>
+</table>
+<h4>Spindle</h4>
+<table>
+	<tr>
+		<td style="vertical-align:top;">Spin Up Time</td>
+		<td>How long to wait for the tool to come up to speed. Your controller should probably take care of this, but it is here if you need it.</td>
+	</tr>
+</table>
+<h4>Feed Rates</h4>
+<table>
+	<tr>
+		<td style="vertical-align:top;">X Y</td>
+		<td>How fast the X &amp; Y axes should move when cutting traces.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Z</td>
+		<td>How fast the Z axis should move when plunging into the board.</td>
+	</tr>
+</table>
+<h4>Misc</h4>
+<h5>Epsilon</h5>
+<p>If a move is smaller than this number, it is not output to the g-code file.<br />
+For example, two points might be at:</p>
+<table>
+	<tr>
+		<td>(0.00120984, 1.2335234)</td>
+	</tr>
+	<tr>
+		<td>(0.00121065, 1.2335234)</td>
+	</tr>
+</table>
+<p>Since the change is very small, and the coordinates in the g-code file are rounded a small amount,<br />
+the coordinates above would be written to the g-code file as:</p>
+<table>
+	<tr>
+		<td>G01 X0.00121 Y1.23352</td>
+	</tr>
+	<tr>
+		<td>G01 X0.00121 Y1.23352</td>
+	</tr>
+</table>
+<p>So we can set epsilon to, say, 0.0001&quot; and avoid the duplicate command.</p>
+<h5>Default Drill Rack File</h5>
+<p>This allows pcb-gcode to substitute drill bits that you have for sizes needed in Eagle parts.<br />
+For instance, if a part has 0.030&quot; holes, and you have a 0.032&quot; drill bit, you can use that.<br />
+You can find full details in the sample rack file. It is <code>settings/default.drl</code>.<br />
+You can create rack files for each board, if you want to. Just name the file <code>board.drl</code>, where board is the name of your board.<br />
+If pcb-gcode does not find a <code>board.drl</code> file, it will look for the file you select in this option.<br />
+If it cannot find that either, it will look for <code>settings/default.drl</code>.<br />
+If it cannot find that, and you have something in this option, it will give you an error that it cannot find a rack file.<br />
+If this option is blank, you won&#8217;t get an error, even if it cannot find a rack file. It will generate the file for drilling your board, and use as many drill sizes as the Eagle libraries use.</p>
+<h3>GCode Style</h3>
+<p>The first time you run pcb-gcode-setup, this will be the only tab available.<br />
+On this tab you select the style g-code that you want pcb-gcode to generate.<br />
+If a profile is available for your machine, you will probably only need to use this once. Just select the profile you want, then click the <code>Accept</code> button.</p>
+<p>You can customize the g-code generated by editing the <code>settings/gcode-defaults.h</code> file. When you are finished, you should edit the <code>Author</code> and <code>Description</code> at the top of the file, and copy it to a <code>profiles/yourmachine.pp</code> file. Then it will appear in this list. If you make major changes (like for a new machine), please also email it to <a href="mailto:pcbgcode@pcbgcode.org">me</a>, so I can make it available to everyone.</p>
+<h3>GCode Options</h3>
+<h4>NC File Comments</h4>
+<p>Select the comments to include in the g-code files. This can help you later when you try to figure out where the g-code came from, how deep it will be cut, etc.</p>
+<h4>Other Options</h4>
+<table>
+	<tr>
+		<td style="vertical-align:top;">Use user gcode (from user-gcode.h)</td>
+		<td>You can add your own g-code to be included at various times in the files generated. Please see this <a href="http://pcbgcode.org/file.php/15/26/howto-user-gcode.pdf">document</a> for full details.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Debug Flag</td>
+		<td>If things aren&#8217;t working well, I might ask you to turn this on, then send me the g-code files generated.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Do tool change with zero step</td>
+		<td>This helps you set the depth of the tool. When it is time to change tools, the tool will move to the tool change position. When you change bits, insert the new bit <strong>high</strong> into the chuck. Tell your control software to &#8220;go&#8221;. The Z axis will move down to 0.0. At this point you can loosen the chuck, let the bit drop to the board, then tighten the chuck.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Flip board in Y instead of X</td>
+		<td>When you turn the board over to etch or drill the bottom side, with this option on, you will turn the board in the Y axis (up and down) rather than the X axis (left to right).</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Compact gcode</td>
+		<td>Eliminates redundant commands (such as G01) in the gcode.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Use line numbers?</td>
+		<td>Adds a line number at the beginning of each line.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Use simple drill code</td>
+		<td>Uses G00 and G01 commands to drill holes, rather than G82. This option is here for previewers and controllers that do not understand the G82 command.</td>
+	</tr>
+</table>
+<h3>Plugins</h3>
+<p>Skeleton for future plugins.<br />
+Currently includes a basic <a href="http://en.wikipedia.org/wiki/Reverse_Polish_notation"><span class="caps">RPN</span></a> calculator.</p>
+<h3>Other</h3>
+<h4>Miscellaneous</h4>
+<table>
+	<tr>
+		<td style="vertical-align:top;">Show progress menu</td>
+		<td>Shows a rudimentary progress menu in Eagle while g-code files are being generated. Probably not needed these days.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">After showing progress, restore menu file (blank for none)</td>
+		<td>If you use the <code>Show progress menu</code> option, and want to restore another menu when it is finished, put the file name here.</td>
+	</tr>
+	<tr>
+		<td style="vertical-align:top;">Reset to Factory Defaults</td>
+		<td>When you can&#8217;t get anything to work right, try this. It copies a set of &#8220;safe&#8221; settings from the <code>safe_options</code> folder. This probably isn&#8217;t needed.</td>
+	</tr>
+</table>
+<h2>How To</h2>
+<p>Andrew Payne has an <a href="http://www.brusselsprout.org/PCB-Routing/">overview</a> of using pcb-gcode.</p>
+<h3>Design your schematic in Eagle.</h3>
+<p>Create your board in Eagle. I usually change the Width in the Net Classes (under the Edit menu) to 0.030&quot; if I&#8217;m trying to squeeze a trace between IC legs, or 0.040&quot; to 0.050&quot; otherwise. When you Autoroute, the router will use the width that you specified. Keep in mind that the traces need to be a certain distance apart, or the outline routines will consider them one and the same, and glob them together. Set the Clearances in <span class="caps">DRC</span> to the size of your cutter to check for this. Change the Restring parameters in <span class="caps">DRC</span> to make the pads and vias larger, if you find that they are to small after milling the traces. You can also try the pcb-gcode.dru included in this archive. In the <span class="caps">DRC</span> window, click the Load button to load it.</p>
+<p>In the command line area (between the board and the toolbar with buttons) run pcb-gcode. Files will be generated to create your board and stored in the same place as the board file.</p>
+<p><code>run pcb-gcode</code></p>
+<p>Mill your board using <a href="http://www.dakeng.com">TurboCNC</a>, <a href="http://linuxcnc.org"><span class="caps">EMC</span></a>, <a href="http://www.artofcnc.ca">Mach</a>, etc. I mill mine in this order: board.top.etch.tap, board.top.drill.tap, flip the board (in X, though you can change this), origin at the same point (which is on the right side now), and run board.etch.bot.tap.</p>
+<p>To stop the auto-router from doing annoying things like putting vias under ICs and components, create a rectangle in layer vRestrict under the part. I like to put a rectangle of tRestrict around each pad, or set of pads, for ICs and components. This keeps you from having to solder on the top of the board. You can make these changes permanent by editing the libraries.</p>
+<p>You can use the built-in previewer now, or if you don&#8217;t want to use it, I highly recommend using a simulator to view your g-code before committing it to copper. <a href="http://www.cncsimulator.com"><span class="caps">CNC</span> Simulator</a> is free. See also <span class="caps">VEGA</span> <span class="caps">DATA</span>-View. If you know of a good NC viewer for the Mac or X11 on the Mac, please drop me a line.</p>
+<h3>Fine Tuning</h3>
+<p>My goal, and probably yours, is to mill tracks as wide as possible, without shorting to other tracks, pads, or vias, and with enough spacing between so that you can solder the pads without solder bridges. This procedure outlines how I fine tuned my setup to accomplish that.</p>
+<p>Included in this release are a board and schematic (04151_lcdi2c.*), pictures are available in the Yahoo! <a href="http://groups.yahoo.com/group/pcb-gcode">pcb-gcode</a> group.</p>
+<h4>Track Width</h4>
+<p>First, you should establish the safe minimum track width your router can produce. Experimentation is your best bet here. You&#8217;ll also want to determine what size cutter to use. I&#8217;ve heard the bits from <a href="http://www.thinktink.com/">Think &amp; Tinker</a> are quite good. Until I order the Think &amp; Tinker bits, I&#8217;m using a 60 degree half round carbide bit. Most cutters are tapered, so depth control is essential. If the <span class="caps">PCB</span> is higher, the cut path will be wider, hence the tracks will be narrower, if there is anything left. On my router, I use a piece of wood with a cavity milled out that is the side of my <span class="caps">PCB</span> stock. I secure the <span class="caps">PCB</span> using fiberglass double-sided carpet tape. The adhesive is very agressive, and works well.</p>
+<p>After experimentation, I determined that I could mill 16mil tracks. This allows me to squeeze a track between IC pads, which was one of my original goals. I laid out the board using a 16mil track width (See 04151_lcdi2c.brd). To figure out the right tool size, I began at 0.001, and worked my way up. Look at this picture <a href="images/0_005.jpg">0_005.jpg</a> . In the center, you can see three IC pads. There is a track between the bottom two pads. You can see (hopefully!) that the track and the IC pads have a small amount of space between. To maximize the track and pad size, we want to minimize this space. The next picture is <a href="images/0_007.jpg">0_007.jpg</a> . This is when I tried 0.007 as the tool size. You can see that the track and pads are wider, and that the lines of each are still separate and distinct. Now look at <a href="images/0_009.jpg">0_009.jpg</a>. See anything wrong? The third IC pad down, and on the left had merged into the track next to it. Not a good thing. So we need to back off on the tool size. As I was writing this, I noticed that at 0.007, the IC looks fine, but some of the tracks and pads at the 14 pin connector had merged. So, 0.005 is the ideal tool size.</p>
+<p>At this point, you probably want to mill a board, and see how everything looks. If it&#8217;s okay, you can set up the <span class="caps">DRC</span> to make sure all your boards have the necessary clearance for milling.</p>
+<h4>Set up Eagle&#8217;s <span class="caps">DRC</span></h4>
+<p>We can use Eagle&#8217;s <span class="caps">DRC</span> (Design Rule Check) tool to help design boards that will mill correctly. To do this, we use a similar technique to the one above, start with approximate values, and adjust them until they are right. I decided to start with 0.007. See the picture <a href="images/setting_clr_0_007.jpg">setting_clr_0_007.jpg</a> . When I clicked the Ok button, I got the list of violations show in <a href="images/clr0_007.jpg">clr0_007.jpg</a> . At this point, I&#8217;m only worried about the Clearance errors. You can see there are only three, and they are justified, as shown by the zoomed in portion of the board. I increased the clearance to 0.008 to see what would happen. The result is shown in <a href="images/clr0_008.jpg">clr0_008.jpg</a> . A lot of errors. Since I milled this board and know that it is okay as is, I want to use 0.007 as the clearance value. If a track is closer than that to a pad, I want an error, because it probably won&#8217;t mill correctly. Now I go into <span class="caps">DRC</span> and set all the clearances to the value that I determined was right, in this case 7mils (0.007). See <a href="images/setting_other_clr_0_007.jpg">setting_other_clr_0_007.jpg</a> . You may want more pad-to-pad and pad-to-via clearance. Again, experiment to find out.</p>
+<h4>Final Results</h4>
+<p>The final product can be seen in the <a href="images/pcb.jpg">pcb.jpg</a> picture. No, this isn&#8217;t the 04151 board that I provided the board and schematic for. It&#8217;s already loaded and in service. We can see a few things from this board though. Look at the circled area labeled A. There are small slivers there that could easily peel up and short the adjacent tracks. This can be corrected by making ISO_MIN smaller, in case a path never was made through this area since they are so small. You might try making ISO_STEP smaller, so that more passes will be made through the area. You can also try making ISO_MAX larger, in case the over all area milled away needs to be larger. Although not the case for the A area, you can see in the D area that more passes would have cleaned out the rest of the slivers from around the &#8220;A&#8221; character. Beginning in area B is a larger sliver. This one should be okay, since it is wider, and not at risk of peeling so easily. Now take a look at area C. Those are thermals around the IC pads, and they look great. Thermals are probably the smallest area to be milled away, except for the inside spaces of letters like A B, etc. Keep an eye on the thermals when changing parameters.</p>
+Have fun!
+Regards,
+JJ

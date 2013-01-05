@@ -397,12 +397,16 @@ int Result = dlgDialog("pcb-gcode Setup") {
 			}
 			dlgGroup("Feed Rates") {
 				dlgGridLayout {
-					dlgCell(1, 0) dlgLabel("X Y ");
+					dlgCell(1, 0) dlgLabel("Isolate ");
 					dlgCell(1, 1) { dlgRealEdit(FEED_RATE); 
 						dlgLabel(m_uom_suffix, YES); dlgLabel("/min"); 
 					}
-					dlgCell(2, 0) dlgLabel("Z ");
+					dlgCell(2, 0) dlgLabel("Drill ");
 					dlgCell(2, 1) { dlgRealEdit(FEED_RATE_Z); 
+						dlgLabel(m_uom_suffix, YES); dlgLabel("/min"); 
+					}
+					dlgCell(3, 0) dlgLabel("Mill ");
+					dlgCell(3, 1) { dlgRealEdit(FEED_RATE); 
 						dlgLabel(m_uom_suffix, YES); dlgLabel("/min"); 
 					}
 				}

@@ -7,4 +7,5 @@
 *.iges
 *.igs
 *.pdf
+*.stl
 *.gcode

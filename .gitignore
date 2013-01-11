@@ -9,3 +9,4 @@
 *.pdf
 *.stl
 *.gcode
+*/optimize_me.txt

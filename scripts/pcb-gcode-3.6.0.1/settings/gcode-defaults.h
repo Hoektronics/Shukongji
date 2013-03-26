@@ -3,8 +3,8 @@
 // Often used options are at the top of the file.
 // Copied to gcode-defaults.h by the setup program.
 //
-// author=John Johnson
-// description=Tries to be very compatible
+// author=Zach Hoeken
+// description=Hoektronics CNC
 //
 
 int FILENAMES_8_CHARACTERS = NO;
@@ -49,7 +49,7 @@ string DWELL    = "G04 " + PARAM + "%f" + EOL;
 string SPINDLE_ON     = "M03" + EOL + DWELL;
 string SPINDLE_OFF    = "M05" + EOL;
 string END_PROGRAM    = "M02" + EOL;
-string OPERATOR_PAUSE = "M06 ";
+string OPERATOR_PAUSE = "M01 ";
 
 //
 // Coordinates
@@ -107,7 +107,9 @@ string DRILL_HOLE = COMMENT_BEGIN + RAPID + "Z" + real_to_string(DEFAULT_Z_UP) +
 string TOOL_CODE        = "T%02d ";
 string TOOL_MM_FORMAT   = "%1.3fmm";
 string TOOL_INCH_FORMAT = "%1.4fin";
-string TOOL_CHANGE      = OPERATOR_PAUSE + TOOL_CODE + " ; " + FORMAT + EOL;
+string TOOL_CHANGE      = "M18" + EOL
+                          + OPERATOR_PAUSE + TOOL_CODE + "(Drill: " + FORMAT + " Adjust to zero)" + EOL
+                          + "G92 X0 Y0 Z0" + EOL;
 
 string TOOL_CHANGE_TABLE_HEADER = COMMENT_BEGIN + 
   " Tool|       Size       |  Min Sub |  Max Sub |   Count " + COMMENT_END + EOL;

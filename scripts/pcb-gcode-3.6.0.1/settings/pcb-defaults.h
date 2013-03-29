@@ -1,7 +1,7 @@
 //
 // Default values for generating gcode from a PCB.
 //
-// These settings were last changed with pcb-gcode-setup: 3/27/13 12:33 PM
+// These settings were last changed with pcb-gcode-setup: 3/27/13 3:40 PM
 //
 //
 // Changes you make in this file will be overwritten if you use pcb-gcode-setup.
@@ -9,7 +9,7 @@
 
 int SINGLE_PASS = NO;
 real ISO_MIN = 0.050000;
-real ISO_MAX = 0.250000;
+real ISO_MAX = 0.300000;
 real ISO_STEP = 0.150000;
 
 int GENERATE_TOP_OUTLINES = YES;

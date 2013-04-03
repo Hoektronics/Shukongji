@@ -65,9 +65,12 @@ def main():
   print "Actual Columns: %d" % cols
   print "Actual Rows: %d" % rows 
   print "Actual Parts: %d" % parts
-  print    
 
   delta = bounds.delta
+  print "Used Area : %dmm * %dmm" % ((cols*delta[0]+(cols-1)*xgap), (rows*delta[1] + (rows-1)*ygap)) 
+  print    
+
+  #update with our gap.
   delta[0] = delta[0]+xgap
   delta[1] = delta[1]+ygap
   

@@ -1,7 +1,7 @@
 //
 // Default values for generating gcode from a PCB.
 //
-// These settings were last changed with pcb-gcode-setup: 3/27/13 3:40 PM
+// These settings were last changed with pcb-gcode-setup: 4/4/13 4:27 PM
 //
 //
 // Changes you make in this file will be overwritten if you use pcb-gcode-setup.

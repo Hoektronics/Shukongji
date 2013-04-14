@@ -1,7 +1,7 @@
 //
 // Default values for generating gcode from a PCB.
 //
-// These settings were last changed with pcb-gcode-setup: 4/4/13 4:27 PM
+// These settings were last changed with pcb-gcode-setup: 4/5/13 3:24 PM
 //
 //
 // Changes you make in this file will be overwritten if you use pcb-gcode-setup.
@@ -27,7 +27,7 @@ int GENERATE_MILLING = YES;
 int GENERATE_TEXT = NO;
 
 int SPOT_DRILL = YES;
-real SPOT_DRILL_DEPTH = -0.100000;
+real SPOT_DRILL_DEPTH = -0.150000;
 
 int DO_TOOL_CHANGE_WITH_ZERO_STEP = NO;
 

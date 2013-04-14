@@ -1,11 +1,12 @@
-width = 180;
-height = 190;
+width = 150;
+height = 150;
+thickness = 10.75;
 
 //material
-material(180, 190, 8.25, 3.1);
+//material(width, height, thickness, 3.1);
 
 //base
-//material(180, 190, 8.25, 2.5);
+material(width, height, thickness, 2.5);
 
 $fs = 0.1;
 

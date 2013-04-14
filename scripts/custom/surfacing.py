@@ -7,7 +7,7 @@ def main():
   parser.add_argument('-y','--ymax', help='Maximum available Y area in millimeters', required=False, default=190)
   parser.add_argument('-t','--toolsize', help='Diameter of the tool in millimeters', required=False, default=4)
   parser.add_argument('-m','--millrate', help='Milling feedrate in mm/min', required=False, default=800)
-  parser.add_argument('-p','--plungerate', help='Plunge feedreate in mm/min', required=False, default=500)
+  parser.add_argument('-p','--plungerate', help='Plunge feedreate in mm/min', required=False, default=400)
   parser.add_argument('-r','--rpm', help='Milling tool RPM', required=False, default=5000)
   parser.add_argument('-d','--depth', help='Depth in millimeters', required=False, default=0.25)
   parser.add_argument('-i','--increment', help='Increment in millimeters', required=False, default=0.25)
@@ -41,7 +41,7 @@ def main():
     cnc.setPosition(0,0,0) #start at 0,0,0
     
   cnc.motorsOff()
-  cnc.confirm("Adjust bit to +6mm")
+  cnc.confirm("Adjust bit to 6mm")
   cnc.setPosition(0, 0, 6)
   cnc.spindleOn(rpm)
 
